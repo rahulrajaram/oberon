@@ -1,0 +1,44 @@
+MODULE Figures; (* Abstract module *)
+
+TYPE
+   Figure*    = POINTER TO FigureDesc;
+   Interface* = POINTER TO InterfaceDesc;
+   Name = ARRAY N OF CHAR;
+
+   InterfaceDesc* = RECORD
+      draw*  : PROCEDURE (f : Figure);
+      clear* : PROCEDURE (f : Figure);
+      mark*  : PROCEDURE (f : Figure);
+      move*  : PROCEDURE (f : Figure; dx, dy : INTEGER);
+   END;
+
+   FigureDesc* = RECORD
+      id : REAL;
+      name : Name;
+      if : Interface;
+   END;
+
+PROCEDURE Init* (f : Figure; if : Interface);
+BEGIN
+   f.name := 22X 
+   f.name := "rahul"
+   f.id := 10H
+   f.id := 4.567E+12
+   f.id := 4.567E-12
+   f.id := 4.567E12
+   (* f.id := 4.567-E12 *)
+   f.id := 4.
+   f.id := 10.00 
+   f.id := ADH
+   f.id := ABS(-100)
+   f.if := if
+END Init;
+
+PROCEDURE Draw* (f : Figure);
+BEGIN
+   f.if.draw(f)
+END Draw;
+
+(* Other procedures here *)
+
+END Figures.
