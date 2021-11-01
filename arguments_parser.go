@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strconv"
 
 	"github.com/fatih/color"
 	"github.com/jessevdk/go-flags"
@@ -26,6 +27,7 @@ type Arguments struct {
 
 var opts struct {
 	Source string `short:"s" long:"source" description:"the Oberon file to parse"`
+	Debug  bool   `long:"debug" description:"Show debug statements"`
 }
 
 func parse() Arguments {
@@ -40,6 +42,7 @@ func parse() Arguments {
 		}
 	}
 	args["source"] = opts.Source
+	args["debug"] = strconv.FormatBool(opts.Debug)
 	return Arguments{
 		result:    SUCCESS,
 		arguments: args,

@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strconv"
 )
 
 func readFile(source string) ([]byte, error) {
@@ -30,5 +31,6 @@ func main() {
 	if err != nil {
 		os.Exit(1)
 	}
-	lexer(contents)
+	debug, _ := strconv.ParseBool(arguments.arguments["debug"])
+	lexer(contents, debug)
 }

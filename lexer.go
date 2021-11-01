@@ -270,7 +270,7 @@ func isIdent(lexeme string) bool {
 	return true
 }
 
-func lexer(contents []byte) LexerResult {
+func lexer(contents []byte, debug bool) LexerResult {
 	//fmt.Println(fmt.Printf("Total number of characters: %d", len(contents)))
 	var i = 0
 	var lineNo = 1
@@ -349,9 +349,11 @@ func lexer(contents []byte) LexerResult {
 			i += 1
 		}
 	}
-	/* for _, ch := range *lexemes {*/
-	//fmt.Println(ch)
-	/*}*/
+	if debug {
+		for _, ch := range *lexemes {
+			fmt.Println(ch)
+		}
+	}
 	if err {
 		return LexerResult{err: fmt.Errorf("error while processing source"), lexemes: lexemes}
 	}
