@@ -282,6 +282,7 @@ func lexer(contents []byte, debug bool) LexerResult {
 	var inNumber = false
 	var inString = false
 	var err = false
+	var errorMessage = ""
 	for i < len(contents) {
 		if i < len(contents)-1 && string(contents[i]) == "(" && string(contents[i+1]) == "*" {
 			inComment = true
@@ -304,7 +305,7 @@ func lexer(contents []byte, debug bool) LexerResult {
 			} else if isIdent(currentLexeme) {
 				*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: IDENT})
 			} else {
-				fmt.Println(fmt.Sprintf("unrecognized token at line %d, column %d", lineNo, columnNo))
+				errorMessage = fmt.Sprintf("unrecognized token at line %d, column %d", lineNo, columnNo)
 				err = true
 				break
 			}
@@ -349,13 +350,15 @@ func lexer(contents []byte, debug bool) LexerResult {
 			i += 1
 		}
 	}
-	if debug {
-		for _, ch := range *lexemes {
-			fmt.Println(ch)
-		}
+	if inComment {
+		errorMessage = fmt.Sprintf("unclosed comment at line %d, column %d", lineNo, columnNo)
+		err = true
+	} else if inString {
+		errorMessage = fmt.Sprintf("unfinished string at line %d, column %d", lineNo, columnNo)
+		err = true
 	}
 	if err {
-		return LexerResult{err: fmt.Errorf("error while processing source"), lexemes: lexemes}
+		return LexerResult{err: fmt.Errorf(errorMessage), lexemes: lexemes}
 	}
 	return LexerResult{lexemes: lexemes}
 }

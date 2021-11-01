@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strconv"
+
+	"github.com/fatih/color"
 )
 
 func readFile(source string) ([]byte, error) {
@@ -32,5 +35,14 @@ func main() {
 		os.Exit(1)
 	}
 	debug, _ := strconv.ParseBool(arguments.arguments["debug"])
-	lexer(contents, debug)
+	lexerResult := lexer(contents, debug)
+	if lexerResult.err != nil {
+		color.Red(lexerResult.err.Error())
+		os.Exit(1)
+	}
+	if debug {
+		for _, ch := range *lexerResult.lexemes {
+			fmt.Println(ch)
+		}
+	}
 }
