@@ -32,6 +32,12 @@ BEGIN
    f.id := ADH
    f.id := ABS(-100)
    f.if := if
+
+   CASE k OF
+       0: x:= x - y
+     | 1: x:= x + y
+     | 2: x:= x / y
+   END
 END Init;
 
 PROCEDURE Draw* (f : Figure);
