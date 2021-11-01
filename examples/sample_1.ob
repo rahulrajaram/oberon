@@ -17,7 +17,7 @@ TYPE
       name : Name;
       if : Interface;
    END;
-
+(*(*(*(**) 10 *)PROCEDURE*)
 PROCEDURE Init* (f : Figure; if : Interface);
 BEGIN
    f.name := 22X 

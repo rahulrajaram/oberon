@@ -1,0 +1,12 @@
+f.name := 22X 
+f.name := "rahul"
+f.id := 10H
+f.id := 4.567E+12
+f.id := 4.567E-12
+f.id := 4.567E12
+(* f.id := 4.567-E12 *)
+f.id := 4.
+f.id := 10.00 
+f.id := ADH
+f.id := ABS(-100)
+f.if := if
