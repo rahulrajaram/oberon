@@ -45,4 +45,9 @@ func main() {
 			fmt.Println(ch)
 		}
 	}
+	_, err1 := parser(lexerResult.lexemes)
+	if err1 != nil {
+		color.Red(err1.Error())
+		os.Exit(1)
+	}
 }
