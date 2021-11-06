@@ -2913,7 +2913,8 @@ func parser(lexemes *[]Lexeme) (*ParseNode, error) {
 		return nil, err
 	}
 	if position < len(*lexemes) {
-		return nil, fmt.Errorf("parse error: unparsed token: %v", (*lexemes)[position])
+		unparsedToken := (*lexemes)[position]
+		return nil, fmt.Errorf("parse error: unparsed token: %v at (line: %d, column: %d), token number: %d", unparsedToken.label, unparsedToken.line, unparsedToken.column, position)
 	}
 	return tree, err
 }
