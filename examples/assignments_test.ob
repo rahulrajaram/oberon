@@ -1,0 +1,29 @@
+MODULE foo;
+BEGIN
+    (* focus on designators *)
+    a := 10;
+    a[10] := 10;
+    a.a := 10;
+    a.a[10] := 10;
+    a.a[10, 20, 30, 40] := 10;
+    a.a^ := 10;
+    a.a(a.a) := 10;
+    a.a(a) := 10;
+    a.a.a.a.a.a.a := 10;
+
+    (* focus on expession *)
+    a := +10;
+    a := -10;
+    a := -10 OR +10 IS -10 OR +10;
+    a := -10 OR +10 DIV 10 IS -10 OR +10;
+
+    (* combination of factor types *)
+    a := TRUE OR FALSE DIV 1 IS NIL OR ~FALSE;
+    a := {};
+    a := {{1, 2, 3, 4, True},{}, NIL, "rahul", True};
+    name := "rahul";
+
+    (* designator [ActualParameters] *) 
+    name := a.a.a.a.a();
+    name := a.a.a.a.a(1, 2, NIL IS NIL);
+END foo.
