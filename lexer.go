@@ -337,6 +337,7 @@ func lexer(contents []byte, debug bool) LexerResult {
 			columnNo += 1
 		} else if !inComment && isOperator(string(contents[i])) {
 			*lexemes = append(*lexemes, Lexeme{label: string(contents[i]), typ: OP_OR_DELIM, line: lineNo, column: columnNo})
+			columnNo += 1
 			i += 1
 		} else if isWhitespace(contents[i]) {
 			if contents[i] == 10 {
