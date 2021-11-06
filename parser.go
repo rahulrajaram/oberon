@@ -15,6 +15,7 @@ var format = logging.MustStringFormatter(
 
 //var backendLeveled = logging.AddModuleLevel(backend)
 var backendFormatter = logging.NewBackendFormatter(backend, format)
+var parserDebug = false
 
 type ParseNode struct {
 	label    string
@@ -38,6 +39,9 @@ func debug(
 	lexemes *[]Lexeme,
 	position *int,
 ) {
+	if !parserDebug {
+		return
+	}
 	if *position < len(*lexemes) {
 		LOG.Debug(fmt.Sprintf("%s (current_token: %v, position: %d)", message, ((*lexemes)[*position]), *position))
 	}
@@ -103,7 +107,6 @@ func matchReservedWord(
 	if lexeme.label == terminal {
 		var terminalNode = new(ParseNode)
 		(*terminalNode).label = lexeme.label
-		LOG.Debug(terminalNode)
 		(*position)++
 		return terminalNode
 	}
@@ -122,7 +125,6 @@ func matchOperator(
 	if lexeme.typ == OP_OR_DELIM && lexeme.label == operator {
 		var terminalNode = new(ParseNode)
 		(*terminalNode).label = lexeme.label
-		LOG.Debug(terminalNode)
 		(*position)++
 		return terminalNode
 	}
@@ -141,7 +143,6 @@ func matchType(
 	if lexeme.typ == lexemeType {
 		var terminalNode = new(ParseNode)
 		(*terminalNode).label = lexeme.label
-		LOG.Debug(terminalNode)
 		(*position)++
 		return terminalNode
 	}
@@ -3027,8 +3028,9 @@ func module(
 	return moduleNode, nil
 }
 
-func parser(lexemes *[]Lexeme) (*ParseNode, error) {
+func parser(lexemes *[]Lexeme, debug bool) (*ParseNode, error) {
 	logging.SetBackend(backendFormatter)
+	parserDebug = debug
 	var position = 0
 	tree, err := module(lexemes, &position)
 	if err == nil {
