@@ -2318,19 +2318,22 @@ func statementSequence(
 	}
 	statementSequenceNode.children = append(statementSequenceNode.children, _statementNode)
 
+	// we deviate here from the spec to allow the final statement in
+	// a statementSequence to be followed by an optional semi-colon
 	for {
 		_semicolonNode := matchOperator(lexemes, position, ";")
 		if _semicolonNode == nil {
 			break
 		}
+		statementSequenceNode.children = append(statementSequenceNode.children, _semicolonNode)
+
 		_statementNode, err := statement(lexemes, position)
 		if err != nil {
 			return nil, err
 		}
 		if _statementNode == nil {
-			return nil, nil
+			break
 		}
-		statementSequenceNode.children = append(statementSequenceNode.children, _semicolonNode)
 		statementSequenceNode.children = append(statementSequenceNode.children, _statementNode)
 	}
 
