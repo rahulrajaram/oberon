@@ -256,34 +256,30 @@ func qualident(
 	var positionCheckpoint = *position
 
 	// [ident "."]
-	debug("Attempting to match ident", lexemes, position)
+	attempt_log("ident", lexemes, position)
 	var _identNode = matchType(lexemes, position, IDENT)
 	if _identNode == nil {
-		debug("Attempting to match predefined identifier", lexemes, position)
-		_identNode = matchType(lexemes, position, PREDEFINED)
-	}
-	if _identNode != nil {
-		qualidentNode.children = append(qualidentNode.children, _identNode)
-		debug("Attempting to match ';'", lexemes, position)
-		_dotOperatorNode := matchOperator(lexemes, position, ".")
-		if _dotOperatorNode == nil {
-			return qualidentNode, nil
-		}
-		qualidentNode.children = append(qualidentNode.children, _dotOperatorNode)
-	}
-
-	// ident
-	debug("Attempting to match ident", lexemes, position)
-	var _identNode1 = matchType(lexemes, position, IDENT)
-	if _identNode1 == nil {
-		debug("Attempting to match predefined identifie", lexemes, position)
-		_identNode1 = matchType(lexemes, position, PREDEFINED)
-	}
-	if _identNode1 == nil {
-		*position = positionCheckpoint
+		did_not_match_log("ident", lexemes, position)
 		return nil, nil
 	}
-	qualidentNode.children = append(qualidentNode.children, _identNode1)
+	qualidentNode.children = append(qualidentNode.children, _identNode)
+	matched_log("ident", lexemes, position)
+	positionCheckpoint = *position
+
+	attempt_log(".", lexemes, position)
+	_dotOperatorNode := matchOperator(lexemes, position, ".")
+	if _dotOperatorNode != nil {
+		matched_log(".", lexemes, position)
+
+		attempt_log("ident", lexemes, position)
+		_identNode := matchType(lexemes, position, IDENT)
+		if _identNode == nil {
+			*position = positionCheckpoint
+			return nil, nil
+		}
+		qualidentNode.children = append(qualidentNode.children, _dotOperatorNode)
+		qualidentNode.children = append(qualidentNode.children, _identNode)
+	}
 
 	return qualidentNode, nil
 }
@@ -297,29 +293,40 @@ func expList(
 	var positionCheckpoint = *position
 
 	// expression
+	attempt_log("expression", lexemes, position)
 	_expressionNode, err := expression(lexemes, position)
 	if err != nil {
 		return nil, err
 	}
 	if nil == _expressionNode {
+		did_not_match_log("expression", lexemes, position)
 		return nil, nil
 	}
+	matched_log("expression", lexemes, position)
 	expListNode.children = append(expListNode.children, _expressionNode)
 
 	// {, expList}
 	for {
+		attempt_optionally_log(",", lexemes, position)
 		_commaOperatorNode := matchOperator(lexemes, position, ",")
 		if nil == _commaOperatorNode {
+			did_not_match_optionally_log(",", lexemes, position)
 			break
 		}
+		optionally_matched_log(",", lexemes, position)
+
+		attempt_log("expression", lexemes, position)
 		_expressionNode, err := expression(lexemes, position)
 		if err != nil {
 			return nil, err
 		}
 		if nil == _expressionNode {
+			did_not_match_log("expression", lexemes, position)
 			*position = positionCheckpoint
 			return nil, nil
 		}
+		matched_log("expression", lexemes, position)
+
 		expListNode.children = append(expListNode.children, _commaOperatorNode)
 		expListNode.children = append(expListNode.children, _expressionNode)
 	}
@@ -335,70 +342,107 @@ func selector(
 	var positionCheckpoint = *position
 
 	// "." ident
+	attempt_optionally_log(".", lexemes, position)
 	_dotOperatorNode := matchOperator(lexemes, position, ".")
 	if _dotOperatorNode != nil {
+		optionally_matched_log(".", lexemes, position)
+
+		attempt_log("ident", lexemes, position)
 		_identNode := matchType(lexemes, position, IDENT)
 		if _identNode == nil {
+			did_not_match_log("ident", lexemes, position)
 			*position = positionCheckpoint
 			return nil, nil
 		}
+		did_not_match_log("ident", lexemes, position)
 		selectorNode.children = append(selectorNode.children, _dotOperatorNode)
 		selectorNode.children = append(selectorNode.children, _identNode)
 
 		return selectorNode, nil
+	} else {
+		did_not_match_optionally_log(".", lexemes, position)
 	}
 
 	// "[" ExpList "]"
+	attempt_optionally_log("[", lexemes, position)
 	_leftBracketNode := matchOperator(lexemes, position, "[")
 	if _leftBracketNode != nil {
+		optionally_matched_log("[", lexemes, position)
+
+		attempt_log("expList", lexemes, position)
 		_expListNode, err := expList(lexemes, position)
 		if err != nil {
 			return nil, err
 		}
 		if _expListNode == nil {
+			did_not_match_log("expList", lexemes, position)
 			*position = positionCheckpoint
 			return nil, nil
 		}
+		matched_log("expList", lexemes, position)
+
+		attempt_log("]", lexemes, position)
 		_rightBracketNode := matchOperator(lexemes, position, "]")
 		if _rightBracketNode == nil {
+			did_not_match_log("]", lexemes, position)
 			*position = positionCheckpoint
 			return nil, nil
 		}
+		matched_log("]", lexemes, position)
+
 		selectorNode.children = append(selectorNode.children, _leftBracketNode)
 		selectorNode.children = append(selectorNode.children, _expListNode)
 		selectorNode.children = append(selectorNode.children, _rightBracketNode)
 
 		return selectorNode, nil
+	} else {
+		did_not_match_optionally_log("[", lexemes, position)
 	}
 
 	// ^
+	attempt_optionally_log("^", lexemes, position)
 	_caratOperatorNode := matchOperator(lexemes, position, "^")
 	if _caratOperatorNode != nil {
+		optionally_matched_log("^", lexemes, position)
 		selectorNode.children = append(selectorNode.children, _caratOperatorNode)
 		return selectorNode, nil
 	}
+	did_not_match_optionally_log("^", lexemes, position)
 
 	// "(" qualident ")"
+	attempt_optionally_log("(", lexemes, position)
 	_leftParenNode := matchOperator(lexemes, position, "(")
 	if _leftParenNode != nil {
+		optionally_matched_log("(", lexemes, position)
+
+		attempt_log("qualident", lexemes, position)
 		_qualidentNode, err := qualident(lexemes, position)
 		if err != nil {
 			return nil, err
 		}
 		if _qualidentNode == nil {
+			did_not_match_log("qualident", lexemes, position)
 			*position = positionCheckpoint
 			return nil, nil
 		}
+		matched_log("qualident", lexemes, position)
+
+		attempt_log(")", lexemes, position)
 		_rightParenNode := matchOperator(lexemes, position, ")")
 		if _rightParenNode == nil {
+			did_not_match_log(")", lexemes, position)
 			*position = positionCheckpoint
 			return nil, nil
 		}
+		matched_log(")", lexemes, position)
+
 		selectorNode.children = append(selectorNode.children, _leftParenNode)
 		selectorNode.children = append(selectorNode.children, _qualidentNode)
 		selectorNode.children = append(selectorNode.children, _rightParenNode)
 
 		return selectorNode, nil
+	} else {
+		did_not_match_optionally_log("(", lexemes, position)
 	}
 
 	return nil, nil
@@ -447,7 +491,7 @@ func element(
 	var elementNode = new(ParseNode)
 
 	// expression
-	_expressionNode, err := element(lexemes, position)
+	_expressionNode, err := expression(lexemes, position)
 	if err != nil {
 		return nil, err
 	}
@@ -459,7 +503,7 @@ func element(
 	// [ .. expression ]
 	_doubleDotOperator := matchOperator(lexemes, position, "..")
 	if _doubleDotOperator != nil {
-		_elementNode, err := element(lexemes, position)
+		_elementNode, err := expression(lexemes, position)
 		if err != nil {
 			return nil, err
 		}
@@ -482,18 +526,23 @@ func set(
 	var positionCheckpoint = *position
 
 	// {
+	attempt_log("{", lexemes, position)
 	_leftbraceNode := matchOperator(lexemes, position, "{")
 	if _leftbraceNode == nil {
+		did_not_match_log("{", lexemes, position)
 		return nil, nil
 	}
+	matched_log("{", lexemes, position)
 	setNode.children = append(setNode.children, _leftbraceNode)
 
 	// element
+	attempt_optionally_log("element", lexemes, position)
 	_elementNode, err := element(lexemes, position)
 	if err != nil {
 		return nil, err
 	}
 	if _elementNode != nil {
+		optionally_matched_log("element", lexemes, position)
 		setNode.children = append(setNode.children, _elementNode)
 		// {, element}
 		for {
@@ -512,14 +561,19 @@ func set(
 			setNode.children = append(setNode.children, _commaNode)
 			setNode.children = append(setNode.children, _elementNode)
 		}
+	} else {
+		did_not_match_log("element", lexemes, position)
 	}
 
 	// }
+	attempt_log("}", lexemes, position)
 	_rightBraceNode := matchOperator(lexemes, position, "}")
 	if _rightBraceNode == nil {
+		did_not_match_log("}", lexemes, position)
 		*position = positionCheckpoint
 		return nil, nil
 	}
+	matched_log("}", lexemes, position)
 	setNode.children = append(setNode.children, _rightBraceNode)
 
 	return setNode, nil
@@ -569,6 +623,9 @@ func factor(
 
 	// number
 	{
+		// BUG: given that a term in SimpleExpression may be preceded by a
+		// + or a - already, this is unnecessary, but without this,
+		// -10 and +10 are unrecognized.
 		attempt_optionally_log("+", lexemes, position)
 		_plusOperatorNode := matchOperator(lexemes, position, "+")
 		if _plusOperatorNode == nil {
@@ -676,29 +733,46 @@ func factor(
 
 	// "(" expression ")"
 	_leftParenNode := matchOperator(lexemes, position, "(")
-	if _leftParenNode == nil {
+	if _leftParenNode != nil {
+		debug("Attempting to match expression", lexemes, position)
+		_expressionNode, err := expression(lexemes, position)
+		if err != nil {
+			return nil, err
+		}
+		if nil == _expressionNode {
+			*position = positionCheckpoint
+			return nil, nil
+		}
+		_rightParenNode := matchOperator(lexemes, position, ")")
+		if err != nil {
+			return nil, err
+		}
+		if _rightParenNode == nil {
+			*position = positionCheckpoint
+			return nil, nil
+		}
+		factorNode.children = append(factorNode.children, _leftParenNode)
+		factorNode.children = append(factorNode.children, _expressionNode)
+		factorNode.children = append(factorNode.children, _rightParenNode)
+		return factorNode, nil
+	}
+
+	// "~" factor
+	_tildeOperator := matchOperator(lexemes, position, "~")
+	if _tildeOperator == nil {
 		return nil, nil
 	}
-	debug("Attempting to match expression", lexemes, position)
-	_expressionNode, err := expression(lexemes, position)
+	_factorNode, err := factor(lexemes, position)
 	if err != nil {
 		return nil, err
 	}
-	if nil == _expressionNode {
+	if nil == _factorNode {
 		*position = positionCheckpoint
 		return nil, nil
 	}
-	_rightParenNode := matchOperator(lexemes, position, ")")
-	if err != nil {
-		return nil, err
-	}
-	if _rightParenNode == nil {
-		*position = positionCheckpoint
-		return nil, nil
-	}
-	factorNode.children = append(factorNode.children, _leftParenNode)
-	factorNode.children = append(factorNode.children, _expressionNode)
-	factorNode.children = append(factorNode.children, _rightParenNode)
+	factorNode.children = append(factorNode.children, _tildeOperator)
+	factorNode.children = append(factorNode.children, _factorNode)
+
 	return factorNode, nil
 }
 
@@ -720,13 +794,13 @@ func mulOperator(
 		return mulOperatorNode, nil
 	}
 
-	_divNode := matchOperator(lexemes, position, "DIV")
+	_divNode := matchReservedWord(lexemes, position, "DIV")
 	if _divNode != nil {
 		mulOperatorNode.children = append(mulOperatorNode.children, _divNode)
 		return mulOperatorNode, nil
 	}
 
-	_modeOperatorNode := matchOperator(lexemes, position, "MOD")
+	_modeOperatorNode := matchReservedWord(lexemes, position, "MOD")
 	if _modeOperatorNode != nil {
 		mulOperatorNode.children = append(mulOperatorNode.children, _modeOperatorNode)
 		return mulOperatorNode, nil
@@ -790,26 +864,37 @@ func addOperator(
 ) (*ParseNode, error) {
 	var addOperatorNode = new(ParseNode)
 
+	attempt_optionally_log("+", lexemes, position)
 	_plusOperatorNode := matchOperator(lexemes, position, "+")
 	if _plusOperatorNode != nil {
+		matched_log("+", lexemes, position)
 		addOperatorNode.children = append(addOperatorNode.children, _plusOperatorNode)
 		return addOperatorNode, nil
+	} else {
+		did_not_match_optionally_log("+", lexemes, position)
 	}
 
+	attempt_optionally_log("-", lexemes, position)
 	_minusOperatorNode := matchOperator(lexemes, position, "-")
 	if _minusOperatorNode != nil {
+		matched_log("-", lexemes, position)
 		addOperatorNode.children = append(addOperatorNode.children, _minusOperatorNode)
 		return addOperatorNode, nil
+	} else {
+		did_not_match_optionally_log("-", lexemes, position)
 	}
 
-	_orOperatorNode := matchOperator(lexemes, position, "&")
+	attempt_optionally_log("OR", lexemes, position)
+	_orOperatorNode := matchReservedWord(lexemes, position, "OR")
 	if _orOperatorNode != nil {
+		matched_log("OR", lexemes, position)
 		addOperatorNode.children = append(addOperatorNode.children, _orOperatorNode)
 		return addOperatorNode, nil
+	} else {
+		did_not_match_optionally_log("OR", lexemes, position)
 	}
 
 	return nil, nil
-
 }
 
 func simpleExpression(
@@ -818,50 +903,64 @@ func simpleExpression(
 ) (*ParseNode, error) {
 	var simpleExpressionNode = new(ParseNode)
 	var positionCheckpoint = *position
+
+	attempt_optionally_log("+", lexemes, position)
 	_plusOperatorNode := matchOperator(lexemes, position, "+")
 	if nil == _plusOperatorNode {
-		_minusOperatorNode := matchOperator(lexemes, position, "+")
+		did_not_match_optionally_log("+", lexemes, position)
+
+		attempt_optionally_log("-", lexemes, position)
+		_minusOperatorNode := matchOperator(lexemes, position, "-")
 		if nil != _minusOperatorNode {
+			optionally_matched_log("-", lexemes, position)
 			simpleExpressionNode.children = append(simpleExpressionNode.children, _minusOperatorNode)
+		} else {
+			did_not_match_optionally_log("-", lexemes, position)
 		}
 	} else {
+		optionally_matched_log("+", lexemes, position)
 		simpleExpressionNode.children = append(simpleExpressionNode.children, _plusOperatorNode)
 	}
 
-	debug("Attempting to match term", lexemes, position)
+	attempt_log("term", lexemes, position)
 	_termNode, err := term(lexemes, position)
 	if err != nil {
 		*position = positionCheckpoint
 		return nil, err
 	}
 	if nil == _termNode {
+		did_not_match_log("term", lexemes, position)
 		*position = positionCheckpoint
 		return nil, nil
 	}
-	debug("Matched term", lexemes, position)
-
 	simpleExpressionNode.children = append(simpleExpressionNode.children, _termNode)
+	matched_log("term", lexemes, position)
+
 	for {
+		attempt_optionally_log("addOperator", lexemes, position)
 		_addOperatorNode, err := addOperator(lexemes, position)
 		if err != nil {
 			return nil, err
 		}
 		if nil == _addOperatorNode {
+			did_not_match_optionally_log("addOperator", lexemes, position)
 			break
 		}
+		optionally_matched_log("addOperator", lexemes, position)
 
+		attempt_log("term", lexemes, position)
 		_termNode, err := term(lexemes, position)
 		if err != nil {
-			*position = positionCheckpoint
 			return nil, err
 		}
 		if nil == _termNode {
+			did_not_match_log("term", lexemes, position)
 			*position = positionCheckpoint
 			return nil, nil
 		}
+		matched_log("term", lexemes, position)
 		simpleExpressionNode.children = append(simpleExpressionNode.children, _addOperatorNode)
 		simpleExpressionNode.children = append(simpleExpressionNode.children, _termNode)
-		positionCheckpoint = *position
 	}
 	return simpleExpressionNode, nil
 }
@@ -908,13 +1007,13 @@ func relation(
 		return relationOperatorNode, nil
 	}
 
-	_inOperatorNode := matchOperator(lexemes, position, "IN")
+	_inOperatorNode := matchReservedWord(lexemes, position, "IN")
 	if _inOperatorNode != nil {
 		relationOperatorNode.children = append(relationOperatorNode.children, _inOperatorNode)
 		return relationOperatorNode, nil
 	}
 
-	_isOperatorNode := matchOperator(lexemes, position, "IS")
+	_isOperatorNode := matchReservedWord(lexemes, position, "IS")
 	if _isOperatorNode != nil {
 		relationOperatorNode.children = append(relationOperatorNode.children, _isOperatorNode)
 		return relationOperatorNode, nil
@@ -931,27 +1030,38 @@ func expression(
 	var expressionNode = new(ParseNode)
 	var positionCheckpoint = *position
 
-	debug("Attempting to match simpleExpression", lexemes, position)
+	attempt_log("simpleExpression", lexemes, position)
 	_simpleExpressionNode, err := simpleExpression(lexemes, position)
 	if err != nil {
 		return nil, err
 	}
+	if _simpleExpressionNode == nil {
+		did_not_match_log("simpleExpression", lexemes, position)
+		return nil, nil
+	}
 	expressionNode.children = append(expressionNode.children, _simpleExpressionNode)
+	matched_log("simpleExpression", lexemes, position)
+
+	attempt_optionally_log("relation", lexemes, position)
 	_relationNode, err := relation(lexemes, position)
 	if err != nil {
-		*position = positionCheckpoint
 		return nil, err
 	}
 	if _relationNode != nil {
+		optionally_matched_log("relation", lexemes, position)
+
+		attempt_log("simpleExpression", lexemes, position)
 		_simpleExpressionNode, err := simpleExpression(lexemes, position)
 		if err != nil {
-			*position = positionCheckpoint
 			return nil, err
 		}
 		if _simpleExpressionNode == nil {
+			did_not_match_log("simpleExpression", lexemes, position)
 			*position = positionCheckpoint
 			return nil, nil
 		}
+		matched_log("simpleExpression", lexemes, position)
+
 		expressionNode.children = append(expressionNode.children, _relationNode)
 		expressionNode.children = append(expressionNode.children, _simpleExpressionNode)
 	}
