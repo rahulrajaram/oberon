@@ -30,9 +30,7 @@ BEGIN
    f.id := 4.;
    f.id := 10.00 ;
    f.id := ADH;
-   (* enhance grammar to allow '+' and '-' before integer
-        e.g.:
-            f.id := ABS(-100); *)
+   f.id := ABS(-100);
    f.if := if;
 
    CASE k OF

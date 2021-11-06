@@ -575,6 +575,23 @@ func factor(
 
 	// number
 	{
+		attempt_optionally_log("+", lexemes, position)
+		_plusOperatorNode := matchOperator(lexemes, position, "+")
+		if _plusOperatorNode == nil {
+			did_not_match_optionally_log("+", lexemes, position)
+			attempt_optionally_log("-", lexemes, position)
+			_minusOperatorNode := matchOperator(lexemes, position, "-")
+			if _minusOperatorNode != nil {
+				optionally_matched_log("-", lexemes, position)
+				factorNode.children = append(factorNode.children, _minusOperatorNode)
+			} else {
+				did_not_match_optionally_log("-", lexemes, position)
+			}
+		} else {
+			optionally_matched_log("+", lexemes, position)
+			factorNode.children = append(factorNode.children, _plusOperatorNode)
+		}
+
 		debug("Attempting to match integer", lexemes, position)
 		_integerNode := matchType(lexemes, position, INTEGER)
 		if _integerNode != nil {
