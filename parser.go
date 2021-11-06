@@ -209,7 +209,6 @@ func importList(
 	if _importNode == nil {
 		did_not_match_log("import", lexemes, position)
 		return nil, nil
-		//return nil, fmt.Errorf("parse error: expected import, found %v", (*lexemes)[*position])
 	}
 	matched_log("import", lexemes, position)
 	importListNode.children = append(importListNode.children, _importNode)
@@ -228,7 +227,6 @@ func importList(
 			debug("Did not find additionalImportNode after matching ','", lexemes, position)
 			*position = positionCheckpoint
 			return nil, nil
-			//return nil, fmt.Errorf("parse error: expected import, found %s", (*lexemes)[*position])
 		}
 		debug("Found additionalImportNode", lexemes, position)
 		importListNode.children = append(importListNode.children, _commaNode)
@@ -242,7 +240,6 @@ func importList(
 		debug("Did not match ';'", lexemes, position)
 		*position = positionCheckpoint
 		return nil, nil
-		//return nil, fmt.Errorf("parse error: expected ';', found %s", (*lexemes)[*position])
 	}
 	debug("Matched ';'", lexemes, position)
 	importListNode.children = append(importListNode.children, _semicolonNode)
@@ -468,7 +465,6 @@ func element(
 		}
 		if _elementNode == nil {
 			return nil, nil
-			//return nil, fmt.Errorf("parse error: expected element, found %s", (*lexemes)[*position])
 		}
 		elementNode.children = append(elementNode.children, _doubleDotOperator)
 		elementNode.children = append(elementNode.children, _elementNode)
@@ -512,7 +508,6 @@ func set(
 			if _elementNode == nil {
 				*position = positionCheckpoint
 				return nil, nil
-				//return nil, fmt.Errorf("parse error: expected element, found %s", (*lexemes)[*position])
 			}
 			setNode.children = append(setNode.children, _commaNode)
 			setNode.children = append(setNode.children, _elementNode)
@@ -524,7 +519,6 @@ func set(
 	if _rightBraceNode == nil {
 		*position = positionCheckpoint
 		return nil, nil
-		//return nil, fmt.Errorf("parse error: expected '}', found %s", (*lexemes)[*position])
 	}
 	setNode.children = append(setNode.children, _rightBraceNode)
 
@@ -782,7 +776,6 @@ func term(
 		if nil == _factorNode {
 			*position = positionCheckpoint
 			return nil, nil
-			//return nil, fmt.Errorf("parse error: expected factor, found %s", (*lexemes)[*position])
 		}
 		termNode.children = append(termNode.children, _mulOperatorNode)
 		termNode.children = append(termNode.children, _factorNode)
@@ -865,7 +858,6 @@ func simpleExpression(
 		if nil == _termNode {
 			*position = positionCheckpoint
 			return nil, nil
-			//return nil, fmt.Errorf("parse error: expected term, found %v", (*lexemes)[*position])
 		}
 		simpleExpressionNode.children = append(simpleExpressionNode.children, _addOperatorNode)
 		simpleExpressionNode.children = append(simpleExpressionNode.children, _termNode)
@@ -958,7 +950,7 @@ func expression(
 		}
 		if _simpleExpressionNode == nil {
 			*position = positionCheckpoint
-			return nil, fmt.Errorf("parse error: expected simpleExpression, found %s", (*lexemes)[*position])
+			return nil, nil
 		}
 		expressionNode.children = append(expressionNode.children, _relationNode)
 		expressionNode.children = append(expressionNode.children, _simpleExpressionNode)
@@ -2589,7 +2581,6 @@ func constDeclaration(
 	if _constExpressionNode == nil {
 		did_not_match_log("constExpression", lexemes, position)
 		return nil, nil
-		//return nil, fmt.Errorf("parse error: expected constDeclaration, found %s", (*lexemes)[*position])
 	}
 	matched_log("constExpression", lexemes, position)
 
