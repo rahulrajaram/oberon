@@ -1,0 +1,6 @@
+MODULE foo;
+    VAR
+        foo : CHAR;
+        foo*, foo, a* : CHAR;
+        foo : RECORD END;
+END foo.

@@ -1,0 +1,19 @@
+MODULE foo;
+    TYPE
+        a* = RECORD END;
+        b* = RECORD (a.b) END;
+        c* = RECORD (d) END;
+        c* = POINTER TO a.a;
+        d* = PROCEDURE ();
+        e* = PROCEDURE ();
+        f* = PROCEDURE () : a.a;
+        f* = PROCEDURE () : b;
+        f* = PROCEDURE (foo: a.a) : b;
+        f* = PROCEDURE (foo: a.a) : b;
+        f* = PROCEDURE (VAR foo: a.a) : b;
+        f* = PROCEDURE (VAR foo, foo2, foo3, foo4: CHAR) : x.y;
+        f* = PROCEDURE () : x.y;
+        f* = ARRAY N OF CHAR;
+        f* = ARRAY 5 OF CHAR;
+        f* = ARRAY 5, N, foo OF CHAR;
+END foo.

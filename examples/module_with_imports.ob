@@ -1,0 +1,4 @@
+MODULE foo;
+    IMPORT import1,
+        import2 := import2alias;
+END foo.

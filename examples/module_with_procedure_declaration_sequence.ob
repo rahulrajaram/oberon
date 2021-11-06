@@ -1,0 +1,26 @@
+MODULE foo;
+    PROCEDURE proc1*;
+    END proc;
+
+    PROCEDURE proc2;
+    END proc;
+
+    PROCEDURE proc3;
+        RETURN 10
+    END proc;
+
+    PROCEDURE proc5;
+        BEGIN a := 10
+    END proc;
+
+    PROCEDURE proc6;
+        BEGIN
+            a := 10;
+            b := a + 10
+        RETURN b
+    END proc;
+
+    PROCEDURE proc5(VAR a, b: REAL; VAR c: CHAR) : foo.bar;
+        BEGIN a := 10
+    END proc;
+END foo.

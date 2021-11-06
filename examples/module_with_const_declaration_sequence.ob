@@ -1,0 +1,4 @@
+MODULE foo;
+    CONST a* = c;
+        x = 100;
+END foo.
