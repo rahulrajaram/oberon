@@ -8,14 +8,15 @@ type LexemeType int
 
 const (
 	CHAR          int = 1
-	NUMBER            = 2
-	STRING            = 3
-	COMMENT           = 4
-	KEYWORD           = 5
-	PREDEFINED        = 6
-	IDENT             = 7
-	OP_OR_DELIM       = 8
-	RESERVED_WORD     = 9
+	INTEGER           = 2
+	REAL              = 3
+	STRING            = 4
+	COMMENT           = 5
+	KEYWORD           = 6
+	PREDEFINED        = 7
+	IDENT             = 8
+	OP_OR_DELIM       = 9
+	RESERVED_WORD     = 10
 )
 
 var OPERATORS = map[string]bool{
@@ -300,8 +301,10 @@ func lexer(contents []byte, debug bool) LexerResult {
 				*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: PREDEFINED})
 			} else if isString(currentLexeme) {
 				*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: STRING})
-			} else if isNumber(currentLexeme) {
-				*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: NUMBER})
+			} else if isInteger(currentLexeme) {
+				*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: INTEGER})
+			} else if isReal(currentLexeme) {
+				*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: REAL})
 			} else if isIdent(currentLexeme) {
 				*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: IDENT})
 			} else {
