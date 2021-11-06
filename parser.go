@@ -2607,22 +2607,24 @@ func declarationSequence_constSequence(
 	lexemes *[]Lexeme,
 	position *int,
 	declarationSequenceNode *ParseNode,
-) error {
+) (*ParseNode, error) {
+	var declarationSequence_constSequenceNode = new(ParseNode)
+
 	// [CONST {ConstDeclaration ";"}]
 	attempt_log("CONST", lexemes, position)
 	_constReservedWordNode := matchReservedWord(lexemes, position, "CONST")
 	if _constReservedWordNode == nil {
 		did_not_match_log("CONST", lexemes, position)
-		return nil
+		return nil, nil
 	}
 	matched_log("CONST", lexemes, position)
-	declarationSequenceNode.children = append(declarationSequenceNode.children, _constReservedWordNode)
+	declarationSequence_constSequenceNode.children = append(declarationSequence_constSequenceNode.children, _constReservedWordNode)
 
 	for {
 		attempt_log("constDeclaration", lexemes, position)
 		_constDeclarationNode, err := constDeclaration(lexemes, position)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		if _constDeclarationNode == nil {
 			did_not_match_optionally_log("constDeclaration", lexemes, position)
@@ -2634,71 +2636,75 @@ func declarationSequence_constSequence(
 		_semicolonNode := matchOperator(lexemes, position, ";")
 		if _semicolonNode == nil {
 			did_not_match_optionally_log(";", lexemes, position)
-			return fmt.Errorf("parse error: expected ';', found %v", (*lexemes)[*position])
+			return nil, nil
 		}
 		matched_log(";", lexemes, position)
 
-		declarationSequenceNode.children =
-			append(declarationSequenceNode.children, _constDeclarationNode)
-		declarationSequenceNode.children =
-			append(declarationSequenceNode.children, _semicolonNode)
+		declarationSequence_constSequenceNode.children =
+			append(declarationSequence_constSequenceNode.children, _constDeclarationNode)
+		declarationSequence_constSequenceNode.children =
+			append(declarationSequence_constSequenceNode.children, _semicolonNode)
 	}
-	return nil
+	return declarationSequence_constSequenceNode, nil
 }
 
 func declarationSequence_typeDeclaration(
 	lexemes *[]Lexeme,
 	position *int,
 	declarationSequenceNode *ParseNode,
-) error {
+) (*ParseNode, error) {
+	var _typeDeclarationSequenceNode = new(ParseNode)
 	// [TYPE {TypeDeclaration ";"}]
 	_typeReservedWordNode := matchReservedWord(lexemes, position, "TYPE")
 
-	if _typeReservedWordNode != nil {
-		declarationSequenceNode.children =
-			append(declarationSequenceNode.children, _typeReservedWordNode)
-		for {
-			_typeDeclarationNode, err := typeDeclaration(lexemes, position)
-			if err != nil {
-				return err
-			}
-			if _typeDeclarationNode == nil {
-				break
-			}
-			_semicolonNode := matchOperator(lexemes, position, ";")
-			if _semicolonNode == nil {
-				return fmt.Errorf("parse error: expected ';', found %v", (*lexemes)[*position])
-			}
-			declarationSequenceNode.children =
-				append(declarationSequenceNode.children, _typeDeclarationNode)
-			declarationSequenceNode.children =
-				append(declarationSequenceNode.children, _semicolonNode)
-		}
+	if _typeReservedWordNode == nil {
+		return nil, nil
 	}
-	return nil
+	_typeDeclarationSequenceNode.children =
+		append(_typeDeclarationSequenceNode.children, _typeReservedWordNode)
+	for {
+		_typeDeclarationNode, err := typeDeclaration(lexemes, position)
+		if err != nil {
+			return _typeDeclarationSequenceNode, err
+		}
+		if _typeDeclarationNode == nil {
+			break
+		}
+		_semicolonNode := matchOperator(lexemes, position, ";")
+		if _semicolonNode == nil {
+			return nil, nil
+		}
+		_typeDeclarationSequenceNode.children =
+			append(_typeDeclarationSequenceNode.children, _typeDeclarationNode)
+		_typeDeclarationSequenceNode.children =
+			append(_typeDeclarationSequenceNode.children, _semicolonNode)
+	}
+
+	return _typeDeclarationSequenceNode, nil
 }
 
 func declarationSequence_varDeclaration(
 	lexemes *[]Lexeme,
 	position *int,
 	declarationSequenceNode *ParseNode,
-) error {
+) (*ParseNode, error) {
+	var _varDeclarationSequenceNode = new(ParseNode)
 	var positionCheckpoint = *position
 
 	attempt_log("VAR", lexemes, position)
 	_varReservedWordNode := matchReservedWord(lexemes, position, "VAR")
 	if _varReservedWordNode == nil {
 		did_not_match_log("VAR", lexemes, position)
-		return nil
+		return nil, nil
 	}
-	declarationSequenceNode.children = append(declarationSequenceNode.children, _varReservedWordNode)
+	_varDeclarationSequenceNode.children = append(_varDeclarationSequenceNode.children, _varReservedWordNode)
 	matched_log("VAR", lexemes, position)
 
 	for {
 		attempt_log("varDeclaration", lexemes, position)
 		_varDeclarationNode, err := varDeclaration(lexemes, position)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		if _varDeclarationNode == nil {
 			did_not_match_log("varDeclaration", lexemes, position)
@@ -2711,44 +2717,43 @@ func declarationSequence_varDeclaration(
 		if _semicolonNode == nil {
 			did_not_match_log(";", lexemes, position)
 			*position = positionCheckpoint
-			return nil
+			return nil, nil
 		}
 		matched_log("varDeclaration", lexemes, position)
 
-		declarationSequenceNode.children =
-			append(declarationSequenceNode.children, _varDeclarationNode)
-		declarationSequenceNode.children =
-			append(declarationSequenceNode.children, _semicolonNode)
+		_varDeclarationSequenceNode.children =
+			append(_varDeclarationSequenceNode.children, _varDeclarationNode)
+		_varDeclarationSequenceNode.children =
+			append(_varDeclarationSequenceNode.children, _semicolonNode)
 	}
-	return nil
+	return _varDeclarationSequenceNode, nil
 }
 
 func declarationSequence_procedureDeclaration(
 	lexemes *[]Lexeme,
 	position *int,
 	declarationSequenceNode *ParseNode,
-) error {
-	var positionCheckpoint = *position
+) (*ParseNode, error) {
+	var _procedureDeclarationSequenceNode = new(ParseNode)
+
 	for {
 		_procedureDeclarationNode, err := procedureDeclaration(lexemes, position)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		if _procedureDeclarationNode == nil {
-			*position = positionCheckpoint
 			break
 		}
 		_semicolonNode := matchOperator(lexemes, position, ";")
 		if _semicolonNode == nil {
-			return fmt.Errorf("parse error: expected ';', found %s", (*lexemes)[*position])
+			return nil, nil
 		}
-		declarationSequenceNode.children =
-			append(declarationSequenceNode.children, _procedureDeclarationNode)
-		declarationSequenceNode.children =
-			append(declarationSequenceNode.children, _semicolonNode)
-		positionCheckpoint = *position
+		_procedureDeclarationSequenceNode.children =
+			append(_procedureDeclarationSequenceNode.children, _procedureDeclarationNode)
+		_procedureDeclarationSequenceNode.children =
+			append(_procedureDeclarationSequenceNode.children, _semicolonNode)
 	}
-	return nil
+	return _procedureDeclarationSequenceNode, nil
 }
 
 func declarationSequence(
@@ -2760,36 +2765,49 @@ func declarationSequence(
 
 	// [CONST {ConstDeclaration ";"}]
 	attempt_log("constSequence", lexemes, position)
-	var err = declarationSequence_constSequence(lexemes, position, declarationSequenceNode)
+	_constDeclarationSequenceNode, err := declarationSequence_constSequence(lexemes, position, declarationSequenceNode)
 	if err != nil {
 		*position = positionCheckpoint
 		return nil, err
+	}
+	if _constDeclarationSequenceNode != nil {
+		declarationSequenceNode.children =
+			append(declarationSequenceNode.children, _constDeclarationSequenceNode)
 	}
 
 	// [TYPE {TypeDeclaration ";"}]
-	err = declarationSequence_typeDeclaration(lexemes, position, declarationSequenceNode)
+	_typeDeclarationSequenceNode, err := declarationSequence_typeDeclaration(lexemes, position, declarationSequenceNode)
 	if err != nil {
 		*position = positionCheckpoint
 		return nil, err
+	}
+	if _typeDeclarationSequenceNode != nil {
+		declarationSequenceNode.children =
+			append(declarationSequenceNode.children, _typeDeclarationSequenceNode)
 	}
 
 	// [VAR {VarDeclaration ";"}]
-	err = declarationSequence_varDeclaration(lexemes, position, declarationSequenceNode)
+	_varDeclarationSequenceNode, err := declarationSequence_varDeclaration(lexemes, position, declarationSequenceNode)
 	if err != nil {
 		*position = positionCheckpoint
 		return nil, err
+	}
+	if _varDeclarationSequenceNode != nil {
+		declarationSequenceNode.children =
+			append(declarationSequenceNode.children, _varDeclarationSequenceNode)
 	}
 
 	// {ProcedureDeclaration ";"}
-	err = declarationSequence_procedureDeclaration(lexemes, position, declarationSequenceNode)
+	_procedureDeclarationSequenceNode, err := declarationSequence_procedureDeclaration(lexemes, position, declarationSequenceNode)
 	if err != nil {
 		*position = positionCheckpoint
 		return nil, err
 	}
-
-	if len(declarationSequenceNode.children) > 0 {
-		return declarationSequenceNode, nil
+	if _procedureDeclarationSequenceNode != nil {
+		declarationSequenceNode.children =
+			append(declarationSequenceNode.children, _procedureDeclarationSequenceNode)
 	}
+
 	return declarationSequenceNode, nil
 }
 
