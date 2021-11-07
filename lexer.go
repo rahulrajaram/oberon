@@ -296,9 +296,23 @@ func lexer(contents []byte, debug bool) LexerResult {
 			i += 2
 			columnNo += 2
 		} else if !inComment && inNumber && (rune(contents[i]) == '.' || rune(contents[i]) == '+' || rune(contents[i]) == '-') {
-			currentLexeme += string(contents[i])
-			i += 1
-			columnNo += 1
+			if i < len(contents)-1 && rune(contents[i+1]) == '.' {
+				if isInteger(currentLexeme) {
+					*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: INTEGER, line: lineNo, column: columnNo})
+				} else if isReal(currentLexeme) {
+					*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: REAL, line: lineNo, column: columnNo})
+				} else {
+					errorMessage = fmt.Sprintf("unrecognized token at line %d, column %d: %s", lineNo, columnNo, currentLexeme)
+					err = true
+					break
+				}
+				inNumber = false
+				currentLexeme = ""
+			} else {
+				currentLexeme += string(contents[i])
+				i += 1
+				columnNo += 1
+			}
 		} else if !inComment && (inIdent || inNumber || inString) && (isOperator(string(contents[i])) || isWhitespace(contents[i])) {
 			if isReservedWord(currentLexeme) {
 				*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: RESERVED_WORD, line: lineNo, column: columnNo})
