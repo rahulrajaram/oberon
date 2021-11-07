@@ -327,7 +327,7 @@ func lexer(contents []byte, debug bool) LexerResult {
 			} else if isIdent(currentLexeme) {
 				*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: IDENT, line: lineNo, column: columnNo})
 			} else {
-				errorMessage = fmt.Sprintf("unrecognized token at line %d, column %d", lineNo, columnNo)
+				errorMessage = fmt.Sprintf("unrecognized token at line %d, column %d: %s", lineNo, columnNo, currentLexeme)
 				err = true
 				break
 			}
