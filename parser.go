@@ -1956,27 +1956,39 @@ func labelRange(
 	var labelRangeNode = new(ParseNode)
 	var positionCheckpoint = *position
 
+	attempt_log("label", lexemes, position)
 	_labelNode, err := label(lexemes, position)
 	if err != nil {
 		return nil, err
 	}
 	if _labelNode == nil {
+		did_not_match_log("label", lexemes, position)
 		return nil, nil
 	}
 	labelRangeNode.children = append(labelRangeNode.children, _labelNode)
+	matched_log("label", lexemes, position)
 
+	attempt_optionally_log("..", lexemes, position)
 	_doubleDotOperatorNode := matchOperator(lexemes, position, "..")
 	if _doubleDotOperatorNode != nil {
+		optionally_matched_log("..", lexemes, position)
+
+		attempt_log("label", lexemes, position)
 		_labelNode, err := label(lexemes, position)
 		if err != nil {
 			return nil, err
 		}
 		if _labelNode == nil {
+			did_not_match_log("label", lexemes, position)
 			*position = positionCheckpoint
 			return nil, nil
 		}
+		matched_log("label", lexemes, position)
+
 		labelRangeNode.children = append(labelRangeNode.children, _doubleDotOperatorNode)
 		labelRangeNode.children = append(labelRangeNode.children, _labelNode)
+	} else {
+		did_not_match_optionally_log("..", lexemes, position)
 	}
 
 	return labelRangeNode, nil
