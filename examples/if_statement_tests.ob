@@ -1,0 +1,31 @@
+MODULE Figures;
+BEGIN
+    counter := 0.11;
+    i := 0;
+
+    IF i < 20 THEN
+        i := i + 1;
+        counter := i + 1;
+    ELSIF i < 10 THEN
+        i := i + 1;
+        counter := i + 1;
+    ELSIF i < 10 THEN
+        (* empty IF-ELSIF-ELSE *)
+    ELSIF i < 10 THEN
+        (* nested IF-ELSIF-ELSE *)
+        IF i < 20 THEN
+            i := i + 1;
+            counter := i + 1;
+        ELSIF i < 10 THEN
+            i := i + 1;
+            counter := i + 1;
+        ELSIF i < 10 THEN
+        ELSE
+            i := i + 1;
+            counter := i + 1;
+        END;
+    ELSE
+        i := i + 1;
+        counter := i + 1;
+    END;
+END Figures.

@@ -1,0 +1,26 @@
+MODULE Figures;
+BEGIN
+    counter := 0.11;
+    i := 0;
+
+    CASE counter OF
+        1,2..5,6..10:
+            counter := counter + 1;
+    END;
+
+    CASE counter OF
+        1,2..5,6..10:
+    END;
+
+    CASE counter OF
+        1,2..5,6..10:
+        | 11..12:
+        | 13:
+            c := 2;
+            d := c + 3 
+        | 14:
+        | "a":
+        | a.a:
+    END;
+
+END Figures.
