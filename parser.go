@@ -2423,7 +2423,7 @@ func statement(
 		return statementNode, nil
 	}
 
-	return nil, nil
+	return statementNode, nil
 }
 
 func statementSequence(
