@@ -7,14 +7,13 @@ import (
 	"github.com/op/go-logging"
 )
 
-var LOG = logging.MustGetLogger("parser")
-var backend = logging.NewLogBackend(os.Stdout, "", 0)
-var format = logging.MustStringFormatter(
+var PARSER_LOG = logging.MustGetLogger("parser")
+var parser_log_backend = logging.NewLogBackend(os.Stdout, "", 0)
+var parser_log_format = logging.MustStringFormatter(
 	`%{color}%{time:15:04:05.000} %{longfile}#%{shortfunc} ▶ %{level:.4s} %{color:reset} %{message}`,
 )
 
-//var backendLeveled = logging.AddModuleLevel(backend)
-var backendFormatter = logging.NewBackendFormatter(backend, format)
+var parser_log_backend_formatter = logging.NewBackendFormatter(parser_log_backend, parser_log_format)
 var parserDebug = false
 
 type ParseNode struct {
@@ -43,7 +42,7 @@ func debug(
 		return
 	}
 	if *position < len(*lexemes) {
-		LOG.Debug(fmt.Sprintf("%s (current_token: %v, position: %d)", message, ((*lexemes)[*position]), *position))
+		PARSER_LOG.Debug(fmt.Sprintf("%s (current_token: %v, position: %d)", message, ((*lexemes)[*position]), *position))
 	}
 }
 
@@ -3448,7 +3447,7 @@ func module(
 }
 
 func parser(lexemes *[]Lexeme, debug bool) (*ParseNode, error) {
-	logging.SetBackend(backendFormatter)
+	logging.SetBackend(parser_log_backend_formatter)
 	parserDebug = debug
 	var position = 0
 	tree, err := module(lexemes, &position)
