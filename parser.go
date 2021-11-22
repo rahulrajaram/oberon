@@ -21,6 +21,16 @@ type ParseNode struct {
 	children []*ParseNode
 }
 
+func print_parse_tree(root *ParseNode) {
+	if nil == root {
+		return
+	}
+	fmt.Println(root.label)
+	for _, child := range root.children {
+		print_parse_tree(child)
+	}
+}
+
 func parse_error(
 	message string,
 	lexemes *[]Lexeme,
@@ -3451,7 +3461,7 @@ func parser(lexemes *[]Lexeme, debug bool) (*ParseNode, error) {
 	parserDebug = debug
 	var position = 0
 	tree, err := module(lexemes, &position)
-	if err == nil {
+	if err != nil {
 		return nil, err
 	}
 	if position < len(*lexemes) {
