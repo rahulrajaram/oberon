@@ -164,6 +164,7 @@ func _import(
 	position *int,
 ) *ParseNode {
 	var importNode = new(ParseNode)
+	importNode.label = "import"
 
 	// ident
 	attempt_log("ident", lexemes, position)
@@ -201,6 +202,7 @@ func importList(
 	position *int,
 ) (*ParseNode, error) {
 	var importListNode = new(ParseNode)
+	importListNode.label = "importList"
 	var positionCheckpoint = *position
 
 	// IMPORT
@@ -263,6 +265,7 @@ func qualident(
 	position *int,
 ) (*ParseNode, error) {
 	var qualidentNode = new(ParseNode)
+	qualidentNode.label = "qualident"
 	var positionCheckpoint = *position
 
 	// [ident "."]
@@ -300,6 +303,7 @@ func expList(
 	position *int,
 ) (*ParseNode, error) {
 	var expListNode = new(ParseNode)
+	expListNode.label = "expList"
 	var positionCheckpoint = *position
 
 	// expression
@@ -349,6 +353,7 @@ func selector(
 	position *int,
 ) (*ParseNode, error) {
 	var selectorNode = new(ParseNode)
+	selectorNode.label = "selector"
 	var positionCheckpoint = *position
 
 	// "." ident
@@ -464,6 +469,7 @@ func designator(
 	position *int,
 ) (*ParseNode, error) {
 	var designatorNode = new(ParseNode)
+	designatorNode.label = "designator"
 
 	// qualident
 	attempt_log("qualident", lexemes, position)
@@ -502,6 +508,7 @@ func element(
 	position *int,
 ) (*ParseNode, error) {
 	var elementNode = new(ParseNode)
+	elementNode.label = "element"
 
 	// expression
 	attempt_log("expression", lexemes, position)
@@ -542,6 +549,7 @@ func set(
 	position *int,
 ) (*ParseNode, error) {
 	var setNode = new(ParseNode)
+	setNode.label = "set"
 	var positionCheckpoint = *position
 
 	// {
@@ -610,6 +618,7 @@ func actualParameters(
 	position *int,
 ) (*ParseNode, error) {
 	var actualParametersNode = new(ParseNode)
+	actualParametersNode.label = "actualParameters"
 	var positionCheckpoint = *position
 
 	// "("
@@ -654,6 +663,7 @@ func factor(
 	position *int,
 ) (*ParseNode, error) {
 	var factorNode = new(ParseNode)
+	factorNode.label = "factor"
 	var positionCheckpoint = *position
 
 	// number
@@ -849,6 +859,7 @@ func mulOperator(
 	position *int,
 ) (*ParseNode, error) {
 	var mulOperatorNode = new(ParseNode)
+	mulOperatorNode.label = "mulOperator"
 
 	attempt_log("*", lexemes, position)
 	_asterixOperatorNode := matchOperator(lexemes, position, "*")
@@ -903,6 +914,7 @@ func term(
 	position *int,
 ) (*ParseNode, error) {
 	var termNode = new(ParseNode)
+	termNode.label = "term"
 	var positionCheckpoint = *position
 
 	attempt_log("factor", lexemes, position)
@@ -953,6 +965,7 @@ func addOperator(
 	position *int,
 ) (*ParseNode, error) {
 	var addOperatorNode = new(ParseNode)
+	addOperatorNode.label = "addOperator"
 
 	attempt_optionally_log("+", lexemes, position)
 	_plusOperatorNode := matchOperator(lexemes, position, "+")
@@ -992,6 +1005,7 @@ func simpleExpression(
 	position *int,
 ) (*ParseNode, error) {
 	var simpleExpressionNode = new(ParseNode)
+	simpleExpressionNode.label = "simpleExpression"
 	var positionCheckpoint = *position
 
 	attempt_optionally_log("+", lexemes, position)
@@ -1060,6 +1074,7 @@ func relation(
 	position *int,
 ) (*ParseNode, error) {
 	var relationOperatorNode = new(ParseNode)
+	relationOperatorNode.label = "relation"
 
 	attempt_log("=", lexemes, position)
 	_equalOperatorNode := matchOperator(lexemes, position, "=")
@@ -1141,6 +1156,7 @@ func expression(
 	position *int,
 ) (*ParseNode, error) {
 	var expressionNode = new(ParseNode)
+	expressionNode.label = "expression"
 	var positionCheckpoint = *position
 
 	attempt_log("simpleExpression", lexemes, position)
@@ -1193,6 +1209,7 @@ func _type(
 	position *int,
 ) (*ParseNode, error) {
 	var _typeNode = new(ParseNode)
+	_typeNode.label = "type"
 
 	attempt_log("qualident", lexemes, position)
 	_qualidentNode, err := qualident(lexemes, position)
@@ -1226,6 +1243,7 @@ func arrayType(
 	position *int,
 ) (*ParseNode, error) {
 	var arrayTypeNode = new(ParseNode)
+	arrayTypeNode.label = "arrayType"
 	var positionCheckpoint = *position
 	var positionCheckpoint1 = *position
 
@@ -1316,6 +1334,7 @@ func identList(
 	position *int,
 ) (*ParseNode, error) {
 	var identListNode = new(ParseNode)
+	identListNode.label = "identList"
 	var positionCheckpoint = *position
 
 	attempt_log("identdef", lexemes, position)
@@ -1362,6 +1381,7 @@ func fieldList(
 	position *int,
 ) (*ParseNode, error) {
 	var fieldListNode = new(ParseNode)
+	fieldListNode.label = "fieldList"
 	var positionCheckpoint = *position
 
 	attempt_log("identList", lexemes, position)
@@ -1408,6 +1428,7 @@ func fieldListSequence(
 	position *int,
 ) (*ParseNode, error) {
 	var fieldListSequenceNode = new(ParseNode)
+	fieldListSequenceNode.label = "fieldListSequence"
 
 	attempt_log("fieldListSequence", lexemes, position)
 	_fieldListNode, err := fieldList(lexemes, position)
@@ -1451,6 +1472,7 @@ func recordType(
 	position *int,
 ) (*ParseNode, error) {
 	var recordTypeNode = new(ParseNode)
+	recordTypeNode.label = "recordType"
 	var positionCheckpoint = *position
 
 	attempt_log("RECORD", lexemes, position)
@@ -1523,6 +1545,7 @@ func pointerType(
 	position *int,
 ) (*ParseNode, error) {
 	var pointerTypeNode = new(ParseNode)
+	pointerTypeNode.label = "pointerType"
 	var positionCheckpoint = *position
 
 	attempt_log("POINTER", lexemes, position)
@@ -1566,6 +1589,7 @@ func formalType(
 	position *int,
 ) (*ParseNode, error) {
 	var formalTypeNode = new(ParseNode)
+	formalTypeNode.label = "formalType"
 	var positionCheckpoint = *position
 
 	attempt_log("ARRAY", lexemes, position)
@@ -1608,6 +1632,7 @@ func fpSection(
 	position *int,
 ) (*ParseNode, error) {
 	var fpSectionNode = new(ParseNode)
+	fpSectionNode.label = "fpSection"
 	var positionCheckpoint = *position
 
 	attempt_log("VAR", lexemes, position)
@@ -1681,6 +1706,7 @@ func formalParameters(
 	position *int,
 ) (*ParseNode, error) {
 	var formalParametersNode = new(ParseNode)
+	formalParametersNode.label = "formalParameters"
 	var positionCheckpoint = *position
 
 	attempt_log("(", lexemes, position)
@@ -1764,6 +1790,7 @@ func procedureType(
 	position *int,
 ) (*ParseNode, error) {
 	var procedureTypeNode = new(ParseNode)
+	procedureTypeNode.label = "procedureType"
 
 	attempt_log("PROCEDURE", lexemes, position)
 	_procedureNode := matchReservedWord(lexemes, position, "PROCEDURE")
@@ -1793,6 +1820,7 @@ func strucType(
 	position *int,
 ) (*ParseNode, error) {
 	var strucTypeNode = new(ParseNode)
+	strucTypeNode.label = "strucType"
 
 	attempt_log("arrayType", lexemes, position)
 	_arrayTypeNode, err := arrayType(lexemes, position)
@@ -1850,6 +1878,7 @@ func typeDeclaration(
 	position *int,
 ) (*ParseNode, error) {
 	var typeDeclarationNode = new(ParseNode)
+	typeDeclarationNode.label = "typeDeclaration"
 	var positionCheckpoint = *position
 
 	attempt_log("identdef", lexemes, position)
@@ -1896,6 +1925,7 @@ func identdef(
 	position *int,
 ) (*ParseNode, error) {
 	var identdefNode = new(ParseNode)
+	identdefNode.label = "identdef"
 
 	attempt_log("ident", lexemes, position)
 	_identNode := matchType(lexemes, position, IDENT)
@@ -1929,6 +1959,7 @@ func assignment(
 	position *int,
 ) (*ParseNode, error) {
 	var assignmentNode = new(ParseNode)
+	assignmentNode.label = "assignment"
 	var positionCheckpoint = *position
 
 	attempt_log("designator", lexemes, position)
@@ -1975,6 +2006,7 @@ func procedureCall(
 	position *int,
 ) (*ParseNode, error) {
 	var procedureCallNode = new(ParseNode)
+	procedureCallNode.label = "procedureCall"
 
 	attempt_log("designator", lexemes, position)
 	_designatorNode, err := designator(lexemes, position)
@@ -2007,6 +2039,7 @@ func ifStatement(
 	position *int,
 ) (*ParseNode, error) {
 	var ifStatementNode = new(ParseNode)
+	ifStatementNode.label = "ifStatement"
 	var positionCheckpoint = *position
 
 	attempt_log("IF", lexemes, position)
@@ -2143,6 +2176,7 @@ func label(
 	position *int,
 ) (*ParseNode, error) {
 	var labelNode = new(ParseNode)
+	labelNode.label = "label"
 
 	attempt_log("INTEGER", lexemes, position)
 	_integerNode := matchType(lexemes, position, INTEGER)
@@ -2182,6 +2216,7 @@ func labelRange(
 	position *int,
 ) (*ParseNode, error) {
 	var labelRangeNode = new(ParseNode)
+	labelRangeNode.label = "labelRange"
 	var positionCheckpoint = *position
 
 	attempt_log("label", lexemes, position)
@@ -2227,6 +2262,7 @@ func caseLabelList(
 	position *int,
 ) (*ParseNode, error) {
 	var caseLabelListNode = new(ParseNode)
+	caseLabelListNode.label = "caseLabelList"
 	var positionCheckpoint = *position
 
 	attempt_log("labelRange", lexemes, position)
@@ -2273,6 +2309,7 @@ func _case(
 	position *int,
 ) (*ParseNode, error) {
 	var _caseNode = new(ParseNode)
+	_caseNode.label = "case"
 
 	attempt_log("caseLabelList", lexemes, position)
 	_caseLabelListNode, err := caseLabelList(lexemes, position)
@@ -2316,6 +2353,7 @@ func caseStatement(
 	position *int,
 ) (*ParseNode, error) {
 	var caseStatementNode = new(ParseNode)
+	caseStatementNode.label = "caseStatement"
 	var positionCheckpoint = *position
 
 	attempt_log("CASE", lexemes, position)
@@ -2406,6 +2444,7 @@ func repeatStatement(
 	position *int,
 ) (*ParseNode, error) {
 	var repeatStatementNode = new(ParseNode)
+	repeatStatementNode.label = "repeatStatement"
 	var positionCheckpoint = *position
 
 	attempt_log("REPEAT", lexemes, position)
@@ -2462,6 +2501,7 @@ func forStatement(
 	position *int,
 ) (*ParseNode, error) {
 	var forStatementNode = new(ParseNode)
+	forStatementNode.label = "forStatement"
 	var positionCheckpoint = *position
 
 	attempt_log("FOR", lexemes, position)
@@ -2594,6 +2634,7 @@ func whileStatement(
 	position *int,
 ) (*ParseNode, error) {
 	var whileStatementNode = new(ParseNode)
+	whileStatementNode.label = "whileStatement"
 	var positionCheckpoint = *position
 
 	attempt_log("WHILE", lexemes, position)
@@ -2707,6 +2748,7 @@ func statement(
 	position *int,
 ) (*ParseNode, error) {
 	var statementNode = new(ParseNode)
+	statementNode.label = "statement"
 
 	attempt_log("assignment", lexemes, position)
 	_assignmentNode, err := assignment(lexemes, position)
@@ -2800,6 +2842,7 @@ func statementSequence(
 	position *int,
 ) (*ParseNode, error) {
 	var statementSequenceNode = new(ParseNode)
+	statementSequenceNode.label = "statementSequence"
 
 	attempt_log("statement", lexemes, position)
 	_statementNode, err := statement(lexemes, position)
@@ -2846,6 +2889,7 @@ func procedureBody(
 	position *int,
 ) (*ParseNode, error) {
 	var procedureBodyNode = new(ParseNode)
+	procedureBodyNode.label = "procedureBody"
 	var positionCheckpoint = *position
 
 	attempt_log("declarationSequence", lexemes, position)
@@ -2917,6 +2961,7 @@ func procedureHeading(
 	position *int,
 ) (*ParseNode, error) {
 	var procedureHeadingNode = new(ParseNode)
+	procedureHeadingNode.label = "procedureHeading"
 	var positionCheckpoint = *position
 
 	attempt_log("PROCEDURE", lexemes, position)
@@ -2960,6 +3005,7 @@ func procedureDeclaration(
 	position *int,
 ) (*ParseNode, error) {
 	var procedureDeclarationNode = new(ParseNode)
+	procedureDeclarationNode.label = "procedureDeclaration"
 	var positionCheckpoint = *position
 
 	attempt_log("procedureHeading", lexemes, position)
@@ -3016,6 +3062,7 @@ func varDeclaration(
 	position *int,
 ) (*ParseNode, error) {
 	var varDeclarationNode = new(ParseNode)
+	varDeclarationNode.label = "varDeclaration"
 	var positionCheckpoint = *position
 
 	attempt_log("ident", lexemes, position)
@@ -3062,6 +3109,7 @@ func constDeclaration(
 	position *int,
 ) (*ParseNode, error) {
 	var constDeclarationNode = new(ParseNode)
+	constDeclarationNode.label = "constDeclaration"
 
 	matched_log("identdef", lexemes, position)
 	_identDefNode, err := identdef(lexemes, position)
@@ -3109,6 +3157,7 @@ func declarationSequence_constSequence(
 	declarationSequenceNode *ParseNode,
 ) (*ParseNode, error) {
 	var declarationSequence_constSequenceNode = new(ParseNode)
+	declarationSequence_constSequenceNode.label = "declarationSequence_constSequence"
 
 	// [CONST {ConstDeclaration ";"}]
 	attempt_log("CONST", lexemes, position)
@@ -3154,6 +3203,7 @@ func declarationSequence_typeDeclaration(
 	declarationSequenceNode *ParseNode,
 ) (*ParseNode, error) {
 	var _typeDeclarationSequenceNode = new(ParseNode)
+	_typeDeclarationSequenceNode.label = "declarationSequence_typeDeclaration"
 
 	// [TYPE {TypeDeclaration ";"}]
 	attempt_log("TYPE", lexemes, position)
@@ -3199,6 +3249,7 @@ func declarationSequence_varDeclaration(
 	declarationSequenceNode *ParseNode,
 ) (*ParseNode, error) {
 	var _varDeclarationSequenceNode = new(ParseNode)
+	_varDeclarationSequenceNode.label = "declarationSequence_varDeclaration"
 	var positionCheckpoint = *position
 
 	attempt_log("VAR", lexemes, position)
@@ -3245,6 +3296,7 @@ func declarationSequence_procedureDeclaration(
 	declarationSequenceNode *ParseNode,
 ) (*ParseNode, error) {
 	var _procedureDeclarationSequenceNode = new(ParseNode)
+	_procedureDeclarationSequenceNode.label = "declarationSequence_procedureDeclaration"
 
 	for {
 		attempt_optionally_log("procedureDeclaration", lexemes, position)
@@ -3279,6 +3331,7 @@ func declarationSequence(
 	position *int,
 ) (*ParseNode, error) {
 	var declarationSequenceNode = new(ParseNode)
+	declarationSequenceNode.label = "declarationSequence"
 	var positionCheckpoint = *position
 
 	// [CONST {ConstDeclaration ";"}]
@@ -3349,6 +3402,7 @@ func module(
 	position *int,
 ) (*ParseNode, error) {
 	var moduleNode = new(ParseNode)
+	moduleNode.label = "module"
 
 	// MODULE
 	attempt_log("MODULE", lexemes, position)
