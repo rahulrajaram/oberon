@@ -9,6 +9,7 @@ import (
 	"github.com/fatih/color"
 
 	lexer "oberon/lexer"
+	parser "oberon/parser"
 )
 
 func readFile(source string) ([]byte, error) {
@@ -47,13 +48,13 @@ func main() {
 			fmt.Println(ch)
 		}
 	}
-	tree, err1 := parser(lexerResult.Lexemes, debug)
+	tree, err1 := parser.Parser(lexerResult.Lexemes, debug)
 	if err1 != nil {
 		color.Red(err1.Error())
 		os.Exit(1)
 	}
 
 	if debug {
-		print_parse_tree(tree, 0)
+		parser.PrintParserTree(tree, 0)
 	}
 }

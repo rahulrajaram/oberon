@@ -1,4 +1,4 @@
-package main
+package parser
 
 import (
 	"fmt"
@@ -23,7 +23,7 @@ type ParseNode struct {
 	Children []*ParseNode
 }
 
-func print_parse_tree(root *ParseNode, indentation int) {
+func PrintParserTree(root *ParseNode, indentation int) {
 	if nil == root {
 		return
 	}
@@ -33,7 +33,7 @@ func print_parse_tree(root *ParseNode, indentation int) {
 	}
 	fmt.Println(fmt.Sprintf("%s%s", space, root.Label))
 	for _, child := range root.Children {
-		print_parse_tree(child, indentation+1)
+		PrintParserTree(child, indentation+1)
 	}
 }
 
@@ -3516,7 +3516,7 @@ func module(
 	return moduleNode, nil
 }
 
-func parser(lexemes *[]lexer.Lexeme, debug bool) (*ParseNode, error) {
+func Parser(lexemes *[]lexer.Lexeme, debug bool) (*ParseNode, error) {
 	logging.SetBackend(parser_log_backend_formatter)
 	parserDebug = debug
 	var position = 0
