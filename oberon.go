@@ -7,6 +7,8 @@ import (
 	"strconv"
 
 	"github.com/fatih/color"
+
+	lexer "oberon/lexer"
 )
 
 func readFile(source string) ([]byte, error) {
@@ -35,23 +37,23 @@ func main() {
 		os.Exit(1)
 	}
 	debug, _ := strconv.ParseBool(arguments.arguments["debug"])
-	lexerResult := lexer(contents, debug)
-	if lexerResult.err != nil {
-		color.Red(lexerResult.err.Error())
+	lexerResult, err := lexer.Lexer(contents, debug)
+	if err != nil {
+		color.Red(err.Error())
 		os.Exit(1)
 	}
 	if debug {
-		for _, ch := range *lexerResult.lexemes {
+		for _, ch := range *lexerResult.Lexemes {
 			fmt.Println(ch)
 		}
 	}
-	tree, err1 := parser(lexerResult.lexemes, debug)
+	tree, err1 := parser(lexerResult.Lexemes, debug)
 	if err1 != nil {
 		color.Red(err1.Error())
 		os.Exit(1)
 	}
 
 	if debug {
-		print_parse_tree(tree)
+		print_parse_tree(tree, 0)
 	}
 }

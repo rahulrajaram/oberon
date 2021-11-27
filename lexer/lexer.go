@@ -1,10 +1,10 @@
-package main
+package lexer
 
 import (
 	"fmt"
 )
 
-type LexemeType int
+type Lexemetype int
 
 const (
 	CHAR          int = 1
@@ -117,15 +117,14 @@ var PREDEFINED_IDENTIFIERS = map[string]bool{
 }
 
 type Lexeme struct {
-	label  string
-	typ    LexemeType
-	line   int
-	column int
+	Label  string
+	Typ    Lexemetype
+	Line   int
+	Column int
 }
 
 type LexerResult struct {
-	lexemes *[]Lexeme
-	err     error
+	Lexemes *[]Lexeme
 }
 
 func isDigit(b byte) bool {
@@ -273,11 +272,11 @@ func isIdent(lexeme string) bool {
 	return true
 }
 
-func lexer(contents []byte, debug bool) LexerResult {
+func Lexer(contents []byte, debug bool) (LexerResult, error) {
 	//fmt.Println(fmt.Printf("Total number of characters: %d", len(contents)))
 	var i = 0
-	var lineNo = 1
-	var columnNo = 1
+	var LineNo = 1
+	var ColumnNo = 1
 	var currentLexeme = ""
 	var inComment = false
 	var lexemes = new([]Lexeme)
@@ -290,19 +289,19 @@ func lexer(contents []byte, debug bool) LexerResult {
 		if i < len(contents)-1 && string(contents[i]) == "(" && string(contents[i+1]) == "*" {
 			inComment = true
 			i += 2
-			columnNo += 2
+			ColumnNo += 2
 		} else if i < len(contents)-1 && string(contents[i]) == "*" && string(contents[i+1]) == ")" {
 			inComment = false
 			i += 2
-			columnNo += 2
+			ColumnNo += 2
 		} else if !inComment && inNumber && (rune(contents[i]) == '.' || rune(contents[i]) == '+' || rune(contents[i]) == '-') {
 			if i < len(contents)-1 && rune(contents[i+1]) == '.' {
 				if isInteger(currentLexeme) {
-					*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: INTEGER, line: lineNo, column: columnNo})
+					*lexemes = append(*lexemes, Lexeme{Label: currentLexeme, Typ: INTEGER, Line: LineNo, Column: ColumnNo})
 				} else if isReal(currentLexeme) {
-					*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: REAL, line: lineNo, column: columnNo})
+					*lexemes = append(*lexemes, Lexeme{Label: currentLexeme, Typ: REAL, Line: LineNo, Column: ColumnNo})
 				} else {
-					errorMessage = fmt.Sprintf("unrecognized token at line %d, column %d: %s", lineNo, columnNo, currentLexeme)
+					errorMessage = fmt.Sprintf("unrecognized token at Line %d, Column %d: %s", LineNo, ColumnNo, currentLexeme)
 					err = true
 					break
 				}
@@ -311,23 +310,23 @@ func lexer(contents []byte, debug bool) LexerResult {
 			} else {
 				currentLexeme += string(contents[i])
 				i += 1
-				columnNo += 1
+				ColumnNo += 1
 			}
 		} else if !inComment && (inIdent || inNumber || inString) && (isOperator(string(contents[i])) || isWhitespace(contents[i])) {
 			if isReservedWord(currentLexeme) {
-				*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: RESERVED_WORD, line: lineNo, column: columnNo})
+				*lexemes = append(*lexemes, Lexeme{Label: currentLexeme, Typ: RESERVED_WORD, Line: LineNo, Column: ColumnNo})
 			} else if isPredefinedIdentifier(currentLexeme) {
-				*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: PREDEFINED, line: lineNo, column: columnNo})
+				*lexemes = append(*lexemes, Lexeme{Label: currentLexeme, Typ: PREDEFINED, Line: LineNo, Column: ColumnNo})
 			} else if isString(currentLexeme) {
-				*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: STRING, line: lineNo, column: columnNo})
+				*lexemes = append(*lexemes, Lexeme{Label: currentLexeme, Typ: STRING, Line: LineNo, Column: ColumnNo})
 			} else if isInteger(currentLexeme) {
-				*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: INTEGER, line: lineNo, column: columnNo})
+				*lexemes = append(*lexemes, Lexeme{Label: currentLexeme, Typ: INTEGER, Line: LineNo, Column: ColumnNo})
 			} else if isReal(currentLexeme) {
-				*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: REAL, line: lineNo, column: columnNo})
+				*lexemes = append(*lexemes, Lexeme{Label: currentLexeme, Typ: REAL, Line: LineNo, Column: ColumnNo})
 			} else if isIdent(currentLexeme) {
-				*lexemes = append(*lexemes, Lexeme{label: currentLexeme, typ: IDENT, line: lineNo, column: columnNo})
+				*lexemes = append(*lexemes, Lexeme{Label: currentLexeme, Typ: IDENT, Line: LineNo, Column: ColumnNo})
 			} else {
-				errorMessage = fmt.Sprintf("unrecognized token at line %d, column %d: %s", lineNo, columnNo, currentLexeme)
+				errorMessage = fmt.Sprintf("unrecognized token at Line %d, Column %d: %s", LineNo, ColumnNo, currentLexeme)
 				err = true
 				break
 			}
@@ -337,58 +336,58 @@ func lexer(contents []byte, debug bool) LexerResult {
 			currentLexeme = ""
 		} else if !inComment && i < len(contents)-1 && isOperator(string(contents[i])) && isOperator(string(contents[i+1])) {
 			if isOperator(string(contents[i]) + string(contents[i+1])) {
-				*lexemes = append(*lexemes, Lexeme{label: string(contents[i]) + string(contents[i+1]), typ: OP_OR_DELIM, line: lineNo, column: columnNo})
+				*lexemes = append(*lexemes, Lexeme{Label: string(contents[i]) + string(contents[i+1]), Typ: OP_OR_DELIM, Line: LineNo, Column: ColumnNo})
 			} else {
-				*lexemes = append(*lexemes, Lexeme{label: string(contents[i]), typ: OP_OR_DELIM, line: lineNo, column: columnNo})
-				*lexemes = append(*lexemes, Lexeme{label: string(contents[i+1]), typ: OP_OR_DELIM, line: lineNo, column: columnNo})
+				*lexemes = append(*lexemes, Lexeme{Label: string(contents[i]), Typ: OP_OR_DELIM, Line: LineNo, Column: ColumnNo})
+				*lexemes = append(*lexemes, Lexeme{Label: string(contents[i+1]), Typ: OP_OR_DELIM, Line: LineNo, Column: ColumnNo})
 			}
 			i += 2
-			columnNo += 2
+			ColumnNo += 2
 		} else if !inComment && !inString && isDigit(contents[i]) {
 			currentLexeme += string(contents[i])
 			inNumber = true
 			i += 1
-			columnNo += 1
+			ColumnNo += 1
 		} else if !inComment && isOperator(string(contents[i])) {
-			*lexemes = append(*lexemes, Lexeme{label: string(contents[i]), typ: OP_OR_DELIM, line: lineNo, column: columnNo})
-			columnNo += 1
+			*lexemes = append(*lexemes, Lexeme{Label: string(contents[i]), Typ: OP_OR_DELIM, Line: LineNo, Column: ColumnNo})
+			ColumnNo += 1
 			i += 1
 		} else if isWhitespace(contents[i]) {
 			if contents[i] == 10 {
-				columnNo = 1
-				lineNo += 1
+				ColumnNo = 1
+				LineNo += 1
 			} else {
-				columnNo += 1
+				ColumnNo += 1
 			}
 			i += 1
 		} else if !inComment && !inString && rune(contents[i]) == '"' {
 			currentLexeme += string(contents[i])
 			inString = true
 			i += 1
-			columnNo += 1
+			ColumnNo += 1
 		} else if inString && rune(contents[i]) == '"' {
 			currentLexeme += string(contents[i])
 			inString = false
 			i += 1
-			columnNo += 1
+			ColumnNo += 1
 		} else {
 			if !inComment {
 				currentLexeme += string(contents[i])
 				inIdent = true
 			}
 			i += 1
-			columnNo += 1
+			ColumnNo += 1
 		}
 	}
 	if inComment {
-		errorMessage = fmt.Sprintf("unclosed comment at line %d, column %d", lineNo, columnNo)
+		errorMessage = fmt.Sprintf("unclosed comment at Line %d, Column %d", LineNo, ColumnNo)
 		err = true
 	} else if inString {
-		errorMessage = fmt.Sprintf("unfinished string at line %d, column %d", lineNo, columnNo)
+		errorMessage = fmt.Sprintf("unfinished string at Line %d, Column %d", LineNo, ColumnNo)
 		err = true
 	}
 	if err {
-		return LexerResult{err: fmt.Errorf(errorMessage), lexemes: lexemes}
+		return LexerResult{Lexemes: lexemes}, fmt.Errorf(errorMessage)
 	}
-	return LexerResult{lexemes: lexemes}
+	return LexerResult{Lexemes: lexemes}, nil
 }
