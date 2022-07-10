@@ -10,6 +10,7 @@ import (
 
 	lexer "oberon/lexer"
 	parser "oberon/parser"
+	semantic_analyzer "oberon/semantic_analyzer"
 )
 
 func readFile(source string) ([]byte, error) {
@@ -57,4 +58,8 @@ func main() {
 	if debug {
 		parser.PrintParserTree(tree, 0)
 	}
+
+	annotated_tree, err2 := semantic_analyzer.Analyze(tree, debug)
+	fmt.Println(annotated_tree)
+	fmt.Println(err2)
 }
